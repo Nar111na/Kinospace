@@ -3,607 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KinoSpace — Онлайн Кинотеатр</title>
+    <title>KinoSpace — Смотреть фильмы онлайн</title>
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-
-        :root {
-            --bg-color: #0d0d12;
-            --card-bg: #1a1a24;
-            --primary-color: #ff5100;
-            --text-color: #ffffff;
-            --text-muted: #a0a0b3;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-        }
-
-        /* Стилизация скроллбара */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-color);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--card-bg);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-
-        /* Навигация */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            background: rgba(13, 13, 18, 0.85);
-            backdrop-filter: blur(15px);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
-            transition: all 0.3s ease;
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .logo span {
-            color: var(--primary-color);
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--primary-color);
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .search-form {
-            position: relative;
-        }
-
-        .search-box {
-            background: var(--card-bg);
-            padding: 10px 20px;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            border: 1px solid transparent;
-            transition: 0.3s;
-        }
-
-        .search-box:focus-within {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px rgba(255, 81, 0, 0.2);
-        }
-
-        .search-box input {
-            background: transparent;
-            border: none;
-            color: white;
-            outline: none;
-            padding-right: 10px;
-            font-size: 14px;
-            width: 200px;
-        }
-
-        .search-box i {
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        .btn-login {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn-login:hover {
-            background: #e04800;
-            transform: translateY(-2px);
-        }
-
-        /* Главный баннер */
-        .hero {
-            height: 85vh;
-            background-size: cover;
-            background-position: center top;
-            display: flex;
-            align-items: flex-end;
-            padding: 0 5% 80px;
-            position: relative;
-            transition: background-image 0.5s ease-in-out;
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, var(--bg-color) 0%, rgba(13, 13, 18, 0.4) 50%, rgba(13, 13, 18, 0.8) 100%);
-            z-index: 1;
-        }
-
-        .hero-content {
-            max-width: 700px;
-            position: relative;
-            z-index: 2;
-            animation: fadeIn 1s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .badge {
-            background: var(--primary-color);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-        .hero-content h1 {
-            font-size: 56px;
-            margin-bottom: 15px;
-            line-height: 1.1;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .meta {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            color: #ddd;
-            font-size: 16px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .meta .rating-star { color: #f5c518; margin-right: 5px; }
-
-        .hero-content p {
-            color: #ccc;
-            line-height: 1.6;
-            margin-bottom: 35px;
-            font-size: 16px;
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .hero-buttons button {
-            padding: 14px 30px;
-            border-radius: 8px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-right: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover { 
-            background: #e04800; 
-            transform: scale(1.05);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .btn-secondary:hover { 
-            background: rgba(255, 255, 255, 0.25); 
-        }
-
-        /* Сетка фильмов */
-        .container {
-            padding: 50px 5%;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .section-header h2 {
-            font-size: 28px;
-            font-weight: 700;
-            position: relative;
-            padding-left: 15px;
-        }
-
-        .section-header h2::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 80%;
-            width: 4px;
-            background: var(--primary-color);
-            border-radius: 2px;
-        }
-
-        .view-all {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .view-all:hover {
-            color: var(--primary-color);
-        }
-
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 30px;
-        }
-
-        .movie-card {
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            position: relative;
-        }
-
-        .movie-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .poster {
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            aspect-ratio: 2 / 3;
-            background: var(--card-bg);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-
-        .poster img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .movie-card:hover .poster img {
-            transform: scale(1.1);
-        }
-
-        .rating {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 14px;
-            z-index: 2;
-        }
-
-        .rating.high { color: #2ecc71; }
-        .rating.medium { color: #f5c518; }
-        .rating.low { color: #e74c3c; }
-
-        .play-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: 0.3s ease;
-            z-index: 2;
-        }
-
-        .play-overlay i {
-            font-size: 60px;
-            color: white;
-            text-shadow: 0 0 15px var(--primary-color);
-            transform: scale(0.8);
-            transition: 0.3s ease;
-        }
-
-        .movie-card:hover .play-overlay {
-            opacity: 1;
-        }
-
-        .movie-card:hover .play-overlay i {
-            transform: scale(1);
-        }
-
-        .info {
-            padding: 15px 5px;
-        }
-
-        .info h3 {
-            font-size: 16px;
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-weight: 600;
-        }
-
-        .info p {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        /* Лоадер */
-        .loader {
-            text-align: center;
-            padding: 50px;
-            font-size: 20px;
-            color: var(--text-muted);
-            width: 100%;
-            grid-column: 1 / -1;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 900px) {
-            .hero-content h1 { font-size: 40px; }
-            .nav-links { display: none; }
-        }
-
-        @media (max-width: 600px) {
-            .navbar { padding: 15px 5%; }
-            .search-box input { width: 130px; }
-            .hero { height: 75vh; padding-bottom: 50px; }
-            .hero-content h1 { font-size: 32px; }
-            .hero-buttons { display: flex; flex-direction: column; gap: 10px; }
-            .hero-buttons button { margin-right: 0; width: 100%; justify-content: center; }
-            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        }
-    </style>
 </head>
 <body>
 
-    <!-- Навигация -->
-    <header class="navbar" id="navbar">
-        <div class="logo" onclick="window.location.reload()">Kino<span>Space</span></div>
+    <header class="navbar">
+        <div class="logo">Kino<span>Space</span></div>
         <nav>
             <ul class="nav-links">
                 <li><a href="#" class="active">Главная</a></li>
                 <li><a href="#">Фильмы</a></li>
                 <li><a href="#">Сериалы</a></li>
-                <li><a href="#">Топ 100</a></li>
+                <li><a href="#">Жанры</a></li>
             </ul>
         </nav>
         <div class="nav-actions">
-            <form class="search-form" id="form">
-                <div class="search-box">
-                    <input type="text" id="search" placeholder="Поиск фильма...">
-                    <i class="fas fa-search" onclick="document.getElementById('form').dispatchEvent(new Event('submit'))"></i>
-                </div>
-            </form>
+            <div class="search-box">
+                <input type="text" placeholder="Поиск фильмов...">
+                <i class="fas fa-search"></i>
+            </div>
             <button class="btn-login">Войти</button>
         </div>
     </header>
 
-    <!-- Главный баннер (заполняется через JS) -->
-    <section class="hero" id="hero">
-        <div class="hero-content" id="hero-content">
-            <!-- Динамический контент -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="badge">Премьера</span>
+            <h1>Интерстеллар</h1>
+            <div class="meta">
+                <span><i class="fas fa-star"></i> 8.6</span>
+                <span>2014</span>
+                <span>Фантастика, Драма</span>
+                <span>169 мин</span>
+            </div>
+            <p>Когда засуха, пыльные бури и вымирание растений приводят человечество к кризису, коллектив исследователей отправляется сквозь червоточину в поисках новой планеты.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary"><i class="fas fa-play"></i> Смотреть</button>
+                <button class="btn-secondary"><i class="fas fa-bookmark"></i> В избранное</button>
+            </div>
         </div>
     </section>
 
-    <!-- Сетка фильмов -->
     <main class="container">
         <div class="section-header">
-            <h2 id="section-title">Популярные новинки</h2>
-            <a href="#" class="view-all">Смотреть все <i class="fas fa-chevron-right" style="font-size: 12px;"></i></a>
+            <h2>Новинки кино</h2>
+            <a href="#" class="view-all">Смотреть все</a>
         </div>
         
-        <div class="movie-grid" id="movie-grid">
-            <div class="loader"><i class="fas fa-spinner fa-spin"></i> Загрузка фильмов...</div>
+        <div class="movie-grid">
+            <div class="movie-card">
+                <div class="poster">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=450&w=300" alt="Постер">
+                    <div class="rating">8.2</div>
+                </div>
+                <div class="info">
+                    <h3>Бегущий по лезвию 2049</h3>
+                    <p>Фантастика • 2017</p>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="poster">
+                    <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=450&w=300" alt="Постер">
+                    <div class="rating">7.9</div>
+                </div>
+                <div class="info">
+                    <h3>Дюна</h3>
+                    <p>Фантастика • 2021</p>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="poster">
+                    <img src="https://images.unsplash.com/photo-1535016120720-40c746a6580c?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=450&w=300" alt="Постер">
+                    <div class="rating">9.0</div>
+                </div>
+                <div class="info">
+                    <h3>Темный рыцарь</h3>
+                    <p>Боевик • 2008</p>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="poster">
+                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=450&w=300" alt="Постер">
+                    <div class="rating">8.5</div>
+                </div>
+                <div class="info">
+                    <h3>Матрица</h3>
+                    <p>Фантастика • 1999</p>
+                </div>
+            </div>
+            
+             <div class="movie-card">
+                <div class="poster">
+                    <img src="https://images.unsplash.com/photo-1574267432553-4b4628081c31?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=450&w=300" alt="Постер">
+                    <div class="rating">8.8</div>
+                </div>
+                <div class="info">
+                    <h3>Начало</h3>
+                    <p>Триллер • 2010</p>
+                </div>
+            </div>
         </div>
     </main>
 
-    <script>
-        // Настройки TMDB API
-        const API_KEY = '3fd2be6f0c70a2a598f084ddfb75487c'; // Публичный ключ для демонстрации
-        const BASE_URL = 'https://api.themoviedb.org/3';
-        const API_URL = `${BASE_URL}/discover/movie?sort_by=popularity.desc&api_key=${API_KEY}&language=ru-RU&page=1`;
-        const SEARCH_URL = `${BASE_URL}/search/movie?api_key=${API_KEY}&language=ru-RU&query=`;
-        const IMG_PATH_HERO = 'https://image.tmdb.org/t/p/original';
-        const IMG_PATH_CARD = 'https://image.tmdb.org/t/p/w500';
-
-        // Элементы DOM
-        const mainGrid = document.getElementById('movie-grid');
-        const form = document.getElementById('form');
-        const search = document.getElementById('search');
-        const hero = document.getElementById('hero');
-        const heroContent = document.getElementById('hero-content');
-        const sectionTitle = document.getElementById('section-title');
-
-        // Запуск при загрузке
-        getMovies(API_URL, true);
-
-        // Функция получения фильмов
-        async function getMovies(url, isHome = false) {
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                
-                if(data.results.length === 0) {
-                    mainGrid.innerHTML = '<div class="loader">Фильмы не найдены :( Попробуйте другой запрос.</div>';
-                    return;
-                }
-
-                if (isHome) {
-                    // Первый фильм идет в Hero баннер
-                    updateHero(data.results[0]);
-                    // Остальные в сетку
-                    showMovies(data.results.slice(1));
-                } else {
-                    // Если это поиск, выводим всё в сетку и скрываем Hero
-                    hero.style.display = 'none';
-                    showMovies(data.results);
-                }
-            } catch (error) {
-                console.error("Ошибка API:", error);
-                mainGrid.innerHTML = '<div class="loader">Ошибка загрузки данных. Проверьте подключение.</div>';
-            }
-        }
-
-        // Обновление главного баннера
-        function updateHero(movie) {
-            const { title, backdrop_path, vote_average, release_date, overview } = movie;
-            const bgImage = backdrop_path ? IMG_PATH_HERO + backdrop_path : 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80';
-            
-            hero.style.backgroundImage = `url('${bgImage}')`;
-            
-            heroContent.innerHTML = `
-                <span class="badge">Выбор редакции</span>
-                <h1>${title}</h1>
-                <div class="meta">
-                    <span><i class="fas fa-star rating-star"></i> ${vote_average.toFixed(1)}</span>
-                    <span><i class="far fa-calendar-alt"></i> ${release_date ? release_date.split('-')[0] : 'Н/Д'}</span>
-                    <span>HDRip</span>
-                </div>
-                <p>${overview ? overview : 'Описание к этому фильму на русском языке пока отсутствует, но он точно заслуживает вашего внимания!'}</p>
-                <div class="hero-buttons">
-                    <button class="btn-primary" onclick="playMovie('${title}')"><i class="fas fa-play"></i> Смотреть онлайн</button>
-                    <button class="btn-secondary" onclick="alert('Добавлено в закладки!')"><i class="fas fa-bookmark"></i> В избранное</button>
-                </div>
-            `;
-        }
-
-        // Отрисовка карточек
-        function showMovies(movies) {
-            mainGrid.innerHTML = '';
-
-            movies.forEach(movie => {
-                const { title, poster_path, vote_average, release_date } = movie;
-                const movieEl = document.createElement('div');
-                movieEl.classList.add('movie-card');
-
-                // Цвет рейтинга
-                let ratingClass = 'medium';
-                if(vote_average >= 7.5) ratingClass = 'high';
-                else if(vote_average < 5.5) ratingClass = 'low';
-
-                const posterSrc = poster_path ? IMG_PATH_CARD + poster_path : 'https://via.placeholder.com/500x750/1a1a24/ffffff?text=Нет+постера';
-
-                movieEl.innerHTML = `
-                    <div class="poster">
-                        <img src="${posterSrc}" alt="${title}">
-                        <div class="rating ${ratingClass}">${vote_average.toFixed(1)}</div>
-                        <div class="play-overlay">
-                            <i class="fas fa-play-circle"></i>
-                        </div>
-                    </div>
-                    <div class="info">
-                        <h3>${title}</h3>
-                        <p>${release_date ? release_date.split('-')[0] : 'Год неизвестен'}</p>
-                    </div>
-                `;
-
-                // Имитация открытия фильма
-                movieEl.addEventListener('click', () => playMovie(title));
-                mainGrid.appendChild(movieEl);
-            });
-        }
-
-        // Обработка поиска
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const searchTerm = search.value;
-
-            if(searchTerm && searchTerm !== '') {
-                sectionTitle.innerText = `Результаты поиска: "${searchTerm}"`;
-                mainGrid.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Ищем...</div>';
-                getMovies(SEARCH_URL + searchTerm, false);
-            } else {
-                window.location.reload();
-            }
-        });
-
-        // Имитация плеера
-        function playMovie(title) {
-            // В реальном проекте здесь открывалась бы страница фильма или модальное окно с плеером Kodik/Alloha
-            alert(`Открытие страницы фильма или запуск видеоплеера для: «${title}»`);
-        }
-
-        // Эффект появления фона у навигации при скролле
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(13, 13, 18, 0.98)';
-                navbar.style.boxShadow = '0 2px 10px rgba(0,0,0,0.5)';
-            } else {
-                navbar.style.background = 'rgba(13, 13, 18, 0.85)';
-                navbar.style.boxShadow = 'none';
-            }
-        });
-    </script>
 </body>
 </html>
-
