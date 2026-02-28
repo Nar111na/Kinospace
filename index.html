@@ -1,8 +1,9 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GoWatch — Смотрите вместе</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -11,77 +12,144 @@
         body { font-family: 'Inter', system-ui, sans-serif; }
         .hero-bg { background: linear-gradient(135deg, #1a0033 0%, #4a0080 100%); }
         .video-container { aspect-ratio: 16 / 9; }
-        .chat-scroll { max-height: 55vh; scrollbar-width: thin; }
-        @media (max-width: 768px) { .chat-scroll { max-height: 45vh; } }
+        .chat-scroll { max-height: 500px; scrollbar-width: thin; }
+        .message { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .room-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .room-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        @media (max-width: 768px) {
+            .chat-scroll { max-height: 45vh; }
+        }
     </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen">
 
-    <nav class="bg-black/90 backdrop-blur-lg border-b border-zinc-800 fixed w-full z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- NAV -->
+    <nav class="bg-black/80 backdrop-blur-lg border-b border-zinc-800 fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-violet-600 rounded-2xl flex items-center justify-center text-2xl">🎥</div>
+                <div class="w-9 h-9 bg-violet-600 rounded-xl flex items-center justify-center text-2xl font-bold">🎥</div>
                 <span class="text-2xl font-bold tracking-tighter">GoWatch</span>
             </div>
-            <div class="hidden md:flex gap-8 text-sm font-medium">
-                <a href="#" onclick="showPage('home')" class="hover:text-violet-400">Главная</a>
-                <a href="#" onclick="showPage('rooms')" class="hover:text-violet-400">Открытые комнаты</a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="#" onclick="showPage('home')" class="hover:text-violet-400 transition-colors">Главная</a>
+                <a href="#" onclick="showPage('rooms')" class="hover:text-violet-400 transition-colors">Открытые комнаты</a>
             </div>
-            <button onclick="createRoomModal()" class="px-6 py-2.5 bg-violet-600 hover:bg-violet-700 rounded-2xl text-sm font-semibold flex items-center gap-2">
-                <i class="fas fa-plus"></i> Создать комнату
-            </button>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleMobileMenu()" class="md:hidden p-3 text-2xl"><i class="fas fa-bars"></i></button>
+                <button onclick="createRoomModal()" class="px-6 py-2 text-sm font-semibold bg-violet-600 hover:bg-violet-700 rounded-2xl transition-colors flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Создать
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-zinc-900 border-t border-zinc-800 py-4 px-6 space-y-4 text-lg font-medium">
+            <a href="#" onclick="showPage('home'); toggleMobileMenu()" class="block">Главная</a>
+            <a href="#" onclick="showPage('rooms'); toggleMobileMenu()" class="block">Открытые комнаты</a>
         </div>
     </nav>
 
-    <!-- HOME -->
-    <div id="home-page" class="pt-24 px-4">
-        <section class="hero-bg py-24 text-center">
-            <h1 class="text-5xl md:text-7xl font-bold leading-none tracking-tighter mb-6">Смотрите вместе<br>с друзьями в реальном времени</h1>
-            <p class="text-xl text-zinc-400 max-w-lg mx-auto">Синхронизация видео + чат</p>
-            <button onclick="createRoomModal()" class="mt-10 px-12 py-6 text-2xl font-semibold bg-white text-black rounded-3xl">Создать комнату</button>
+    <!-- HOME PAGE -->
+    <div id="home-page" class="pt-24">
+        <section class="hero-bg py-24">
+            <div class="max-w-5xl mx-auto px-6 text-center">
+                <h1 class="text-6xl md:text-7xl font-bold leading-none tracking-tighter mb-6">
+                    Смотрите фильмы,<br>сериалы и видео<br><span class="text-violet-400">вместе</span>
+                </h1>
+                <p class="text-xl text-zinc-400 max-w-2xl mx-auto mb-10">
+                    Создавайте комнаты. Синхронный просмотр. Чат. Без регистрации.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="createRoomModal()" class="px-10 py-5 text-xl font-semibold bg-white text-black rounded-3xl hover:scale-105 transition-transform flex items-center justify-center gap-3">
+                        <i class="fas fa-play"></i> Создать комнату
+                    </button>
+                    <button onclick="showPage('rooms')" class="px-10 py-5 text-xl font-semibold border-2 border-white/80 hover:bg-white/10 rounded-3xl transition-colors">
+                        Присоединиться к открытой
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section class="py-20 bg-zinc-900">
+            <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+                <div class="bg-zinc-800/50 p-8 rounded-3xl">
+                    <div class="w-14 h-14 bg-violet-500/20 text-violet-400 rounded-2xl flex items-center justify-center text-3xl mb-6">🔄</div>
+                    <h3 class="text-2xl font-semibold mb-3">Синхронизация в реальном времени</h3>
+                    <p class="text-zinc-400">Play, пауза и перемотка синхронизируются мгновенно.</p>
+                </div>
+                <div class="bg-zinc-800/50 p-8 rounded-3xl">
+                    <div class="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl mb-6">💬</div>
+                    <h3 class="text-2xl font-semibold mb-3">Чат</h3>
+                    <p class="text-zinc-400">Обсуждайте фильм прямо во время просмотра.</p>
+                </div>
+                <div class="bg-zinc-800/50 p-8 rounded-3xl">
+                    <div class="w-14 h-14 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-3xl mb-6">🌐</div>
+                    <h3 class="text-2xl font-semibold mb-3">Открытые комнаты</h3>
+                    <p class="text-zinc-400">Присоединяйтесь к существующим или создавайте новые.</p>
+                </div>
+            </div>
         </section>
     </div>
 
-    <!-- ROOMS -->
-    <div id="rooms-page" class="pt-24 hidden px-4">
-        <div class="max-w-7xl mx-auto">
-            <h1 class="text-4xl font-bold mb-8">Открытые комнаты</h1>
-            <div id="rooms-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <!-- ROOMS PAGE -->
+    <div id="rooms-page" class="pt-24 hidden">
+        <div class="max-w-7xl mx-auto px-6 py-10">
+            <div class="flex justify-between items-end mb-8">
+                <h1 class="text-5xl font-bold">Открытые комнаты</h1>
+                <button onclick="createRoomModal()" class="bg-violet-600 hover:bg-violet-700 px-8 py-3 rounded-3xl font-medium flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Создать свою
+                </button>
+            </div>
+            <div id="rooms-list" class="grid md:grid-cols-3 gap-6"></div>
         </div>
     </div>
 
-    <!-- ROOM -->
-    <div id="room-page" class="pt-20 hidden px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-zinc-900 rounded-3xl p-5 mb-6 flex items-center justify-between sticky top-20 z-40">
-                <div>
-                    <div id="room-name" class="font-bold text-2xl"></div>
-                    <div id="online-users" class="text-emerald-400 text-sm">● онлайн</div>
+    <!-- ROOM PAGE -->
+    <div id="room-page" class="pt-20 hidden">
+        <div class="max-w-7xl mx-auto px-6 py-6">
+            <div class="flex items-center justify-between mb-6 bg-zinc-900 rounded-3xl p-5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-violet-600 rounded-2xl flex items-center justify-center text-3xl">🍿</div>
+                    <div>
+                        <div id="room-name" class="font-semibold text-xl"></div>
+                        <div id="online-users" class="text-emerald-400 text-xs flex items-center gap-1">
+                            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> онлайн
+                        </div>
+                    </div>
                 </div>
-                <button onclick="copyRoomLink()" class="bg-violet-600 hover:bg-violet-700 px-6 py-3 rounded-2xl flex items-center gap-2">
-                    <i class="fas fa-share"></i> Пригласить друга
+                <button onclick="copyRoomLink()" class="bg-zinc-800 hover:bg-zinc-700 px-6 py-2.5 rounded-2xl text-sm flex items-center gap-2">
+                    <i class="fas fa-share"></i> Пригласить
                 </button>
             </div>
 
             <div class="grid lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-8">
                     <div class="video-container bg-black rounded-3xl overflow-hidden shadow-2xl">
-                        <iframe id="video-player" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+                        <iframe id="video-player" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
                     </div>
-                    <div class="mt-4 flex gap-3">
-                        <button onclick="broadcastAction('play')" class="flex-1 bg-emerald-600 py-4 rounded-3xl text-lg font-medium">▶ Всем играть</button>
-                        <button onclick="broadcastAction('pause')" class="flex-1 bg-amber-600 py-4 rounded-3xl text-lg font-medium">⏸ Всем пауза</button>
+                    <div class="mt-4 flex gap-4">
+                        <button onclick="broadcastAction('play')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-3 rounded-2xl flex items-center justify-center gap-2">
+                            <i class="fas fa-play"></i> Играть
+                        </button>
+                        <button onclick="broadcastAction('pause')" class="flex-1 bg-amber-600 hover:bg-amber-700 py-3 rounded-2xl flex items-center justify-center gap-2">
+                            <i class="fas fa-pause"></i> Пауза
+                        </button>
                     </div>
                 </div>
-
-                <div class="lg:col-span-4">
-                    <div class="bg-zinc-900 rounded-3xl flex flex-col h-[520px]">
-                        <div class="p-5 border-b border-zinc-800 font-medium">Чат (realtime)</div>
-                        <div id="chat-messages" class="chat-scroll flex-1 p-5 overflow-y-auto space-y-4"></div>
-                        <div class="p-4 border-t">
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <div class="bg-zinc-900 rounded-3xl p-5">
+                        <div class="font-medium mb-4">В комнате</div>
+                        <div id="users-list" class="grid grid-cols-4 gap-3"></div>
+                    </div>
+                    <div class="flex-1 bg-zinc-900 rounded-3xl flex flex-col overflow-hidden">
+                        <div class="p-5 border-b border-zinc-800 font-medium">Чат</div>
+                        <div id="chat-messages" class="chat-scroll flex-1 p-5 overflow-y-auto space-y-4 text-sm"></div>
+                        <div class="p-4 border-t border-zinc-800">
                             <div class="flex gap-2">
-                                <input id="chat-input" placeholder="Напишите сообщение..." class="flex-1 bg-zinc-800 rounded-3xl px-6 py-4 outline-none">
-                                <button onclick="sendMessage()" class="bg-violet-600 w-12 h-12 rounded-3xl flex items-center justify-center">➤</button>
+                                <input id="chat-input" placeholder="Сообщение..." class="flex-1 bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 outline-none focus:border-violet-500">
+                                <button onclick="sendMessage()" class="bg-violet-600 hover:bg-violet-700 w-12 h-12 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -90,15 +158,23 @@
         </div>
     </div>
 
-    <!-- MODAL -->
-    <div id="create-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 px-4">
-        <div class="bg-zinc-900 rounded-3xl w-full max-w-md p-8">
+    <!-- CREATE MODAL -->
+    <div id="create-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-100">
+        <div class="bg-zinc-900 rounded-3xl w-full max-w-md mx-4 p-8">
             <h2 class="text-3xl font-bold mb-6">Новая комната</h2>
-            <input id="modal-room-name" value="Вечерний киносеанс" class="w-full bg-zinc-800 rounded-3xl px-6 py-5 mb-6 outline-none">
-            <input id="modal-video-url" placeholder="https://youtube.com/watch?v=..." class="w-full bg-zinc-800 rounded-3xl px-6 py-5 mb-8 outline-none">
-            <div class="flex gap-4">
-                <button onclick="closeModal()" class="flex-1 py-4 rounded-3xl border border-zinc-700">Отмена</button>
-                <button onclick="createRoom()" class="flex-1 py-4 bg-violet-600 rounded-3xl font-semibold">Создать и войти</button>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm text-zinc-400 mb-2">Название</label>
+                    <input id="modal-room-name" type="text" value="Вечерний киносеанс" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-violet-500">
+                </div>
+                <div>
+                    <label class="block text-sm text-zinc-400 mb-2">Ссылка на видео (YouTube)</label>
+                    <input id="modal-video-url" type="text" placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-violet-500">
+                </div>
+            </div>
+            <div class="mt-8 flex gap-4">
+                <button onclick="closeModal()" class="flex-1 py-4 text-zinc-400 hover:bg-zinc-800 rounded-2xl transition-colors">Отмена</button>
+                <button onclick="createRoom()" class="flex-1 py-4 bg-violet-600 hover:bg-violet-700 font-semibold rounded-2xl transition-colors">Создать и войти</button>
             </div>
         </div>
     </div>
@@ -106,13 +182,10 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        const supabase = createClient(
-            'https://girmatqjxgypwzmqopyc.supabase.co',
-            'sb_publishable_Wz4AmGy3bAoq12SjJoVNeA_-RkaFzyI'
-        );
+        const supabase = createClient('https://girmatqjxgypwzmqopyc.supabase.co', 'sb_publishable_Wz4AmGy3bAoq12SjJoVNeA_-RkaFzyI');
 
         let currentRoomId = null;
-        let currentUsername = "Гость" + Math.floor(1000 + Math.random() * 9000);
+        let currentUsername = 'Гость' + Math.floor(Math.random() * 10000);
         let channel = null;
 
         async function init() {
@@ -121,25 +194,32 @@
 
             if (location.hash.startsWith('#room=')) {
                 const roomId = location.hash.slice(6);
-                const { data } = await supabase.from('rooms').select('id,name,video_id').eq('id', roomId).single();
+                const { data } = await supabase.from('rooms').select('*').eq('id', roomId).single();
                 if (data) enterRoom(data.id, data.name, data.video_id);
             }
         }
 
         function showPage(page) {
-            document.querySelectorAll('#home-page,#rooms-page,#room-page').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('#home-page, #rooms-page, #room-page').forEach(p => p.classList.add('hidden'));
             document.getElementById(page + '-page').classList.remove('hidden');
-            if (page === 'rooms') loadPublicRooms();
+            if (page === 'rooms') loadRooms();
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
         }
 
         async function createRoom() {
-            const name = document.getElementById('modal-room-name').value.trim() || "Без названия";
-            let url = document.getElementById('modal-video-url').value.trim();
-            if (!url) url = "https://www.youtube.com/watch?v=dQw4w9wgxcq";
-            const videoId = url.match(/(?:v=|youtu\.be\/)([^&?]+)/)?.[1] || "dQw4w9wgxcq";
+            const name = document.getElementById('modal-room-name').value || 'Без названия';
+            const url = document.getElementById('modal-video-url').value || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+            const videoId = url.match(/(?:v=|[^a-zA-Z0-9-])([a-zA-Z0-9_-]{11})/)?.[1] || 'dQw4w9WgXcQ';
 
             const { data, error } = await supabase.from('rooms').insert({ name, video_id: videoId, is_public: true }).select().single();
-            if (error) return alert("Ошибка: " + error.message);
+            if (error) {
+                console.error(error);
+                alert('Ошибка создания комнаты: ' + error.message);
+                return;
+            }
 
             closeModal();
             enterRoom(data.id, data.name, data.video_id);
@@ -149,82 +229,88 @@
             currentRoomId = roomId;
             showPage('room');
             document.getElementById('room-name').textContent = name;
-
-            const iframe = document.getElementById('video-player');
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+            document.getElementById('video-player').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
 
             if (channel) channel.unsubscribe();
             channel = supabase.channel(`room:${roomId}`);
 
-            channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `room_id=eq.${roomId}` }, p => {
-                addMessage(p.new.username, p.new.message);
+            channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `room_id=eq.${roomId}` }, payload => {
+                addMessage(payload.new.username, payload.new.message);
             }).subscribe();
 
             channel.on('broadcast', { event: 'video-sync' }, ({ payload }) => {
+                const iframe = document.getElementById('video-player');
                 if (payload.action === 'play') iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                 if (payload.action === 'pause') iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                if (payload.seek !== undefined) iframe.contentWindow.postMessage(`{"event":"command","func":"seekTo","args":[${payload.seek},true]}`, '*');
             });
 
             channel.on('presence', { event: 'sync' }, () => {
-                document.getElementById('online-users').innerHTML = `● ${Object.keys(channel.presenceState()).length} онлайн`;
+                const count = Object.keys(channel.presenceState()).length;
+                document.getElementById('online-users').innerHTML = `<span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> ${count} онлайн`;
             });
             await channel.track({ username: currentUsername });
 
-            setInterval(() => {
-                if (channel) channel.send({ type: 'broadcast', event: 'video-sync', payload: { seek: Date.now() / 1000 } });
-            }, 8000);
-
-            const { data: msgs } = await supabase.from('messages').select('*').eq('room_id', roomId).order('created_at');
+            const { data: msgs } = await supabase.from('messages').select('*').eq('room_id', roomId).order('created_at', { ascending: true });
             document.getElementById('chat-messages').innerHTML = '';
-            msgs?.forEach(m => addMessage(m.username, m.message));
+            msgs.forEach(m => addMessage(m.username, m.message));
         }
 
-        function broadcastAction(action) {
-            if (!channel) return;
-            channel.send({ type: 'broadcast', event: 'video-sync', payload: { action, seek: Date.now() / 1000 } });
-        }
-
-        function addMessage(user, text) {
-            const container = document.getElementById('chat-messages');
+        function addMessage(username, text) {
             const div = document.createElement('div');
-            div.className = `flex ${user === currentUsername ? 'justify-end' : ''}`;
-            div.innerHTML = `<div class="\( {user === currentUsername ? 'bg-violet-600' : 'bg-zinc-800'} px-5 py-3 rounded-3xl max-w-[85%]"><div class="text-xs opacity-70"> \){user}</div><div>${text}</div></div>`;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+            div.className = `message flex gap-3 ${username === currentUsername ? 'justify-end' : ''}`;
+            div.innerHTML = `
+                <div class="${username === currentUsername ? 'bg-violet-600' : 'bg-zinc-800'} px-4 py-3 rounded-3xl max-w-[75%]">
+                    <div class="text-xs opacity-70">${username}</div>
+                    <div>${text}</div>
+                </div>
+            `;
+            document.getElementById('chat-messages').appendChild(div);
+            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
         }
 
         async function sendMessage() {
             const input = document.getElementById('chat-input');
-            if (!input.value.trim() || !currentRoomId) return;
-            await supabase.from('messages').insert({ room_id: currentRoomId, username: currentUsername, message: input.value.trim() });
+            const text = input.value.trim();
+            if (!text || !currentRoomId) return;
+            await supabase.from('messages').insert({ room_id: currentRoomId, username: currentUsername, message: text });
             input.value = '';
         }
 
+        function broadcastAction(action) {
+            if (!channel) return;
+            channel.send({ type: 'broadcast', event: 'video-sync', payload: { action } });
+        }
+
         function copyRoomLink() {
-            const link = window.location.origin + '#room=' + currentRoomId;
-            navigator.clipboard.writeText(link);
-            alert('✅ Ссылка скопирована! Отправь другу — он сразу попадёт в комнату');
+            navigator.clipboard.writeText(window.location.origin + '#room=' + currentRoomId);
+            alert('Ссылка скопирована!');
         }
 
         function closeModal() { document.getElementById('create-modal').classList.add('hidden'); }
+
         function createRoomModal() { document.getElementById('create-modal').classList.remove('hidden'); }
 
-        async function loadPublicRooms() {
+        async function loadRooms() {
             const { data } = await supabase.from('rooms').select('*').eq('is_public', true);
             const container = document.getElementById('rooms-list');
-            container.innerHTML = data.length ? '' : '<p class="col-span-3 text-center py-12 text-zinc-400">Комнат пока нет. Создай первую!</p>';
-            data.forEach(r => {
-                const el = document.createElement('div');
-                el.className = 'bg-zinc-900 rounded-3xl p-6 cursor-pointer hover:bg-zinc-800';
-                el.innerHTML = `<div class="font-bold">${r.name}</div><div class="text-sm text-emerald-400 mt-2">Нажми чтобы присоединиться</div>`;
-                el.onclick = () => enterRoom(r.id, r.name, r.video_id);
-                container.appendChild(el);
+            container.innerHTML = '';
+            data.forEach(room => {
+                const card = document.createElement('div');
+                card.className = 'room-card bg-zinc-900 rounded-3xl p-6 cursor-pointer';
+                card.innerHTML = `
+                    <div class="font-semibold text-lg mb-2">${room.name}</div>
+                    <div class="text-xs text-zinc-400">Присоединиться</div>
+                `;
+                card.onclick = () => enterRoom(room.id, room.name, room.video_id);
+                container.appendChild(card);
             });
         }
 
         window.onload = init;
-        document.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.activeElement.id === 'chat-input') sendMessage();
+        });
     </script>
 </body>
 </html>
+```
